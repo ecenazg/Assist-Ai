@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+@Slf4j
 @RestController
 public class SendBussNumberWithImage {
 
@@ -53,7 +55,7 @@ public class SendBussNumberWithImage {
 
         JSONObject result = new JSONObject();
         result.put("resultArray", resultArray);
-
+        log.info("Response " + result);
         return result;
     }
 }

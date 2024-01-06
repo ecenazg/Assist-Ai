@@ -8,9 +8,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
-
+import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
-
+@Slf4j
 public class SimpleHttpRequest {
 
     final static String apiUrl = "https://detect.roboflow.com/bus-number-detection-0fiy2/1";
@@ -29,8 +29,8 @@ public class SimpleHttpRequest {
                 HttpEntity entity = response.getEntity();
                 String responseBody = entity != null ? EntityUtils.toString(entity) : "";
 
-                System.out.println("Response Code: " + statusCode);
-                System.out.println("Response: " + responseBody);
+                log.info("Response Code: " + statusCode);
+                log.info("Response: " + responseBody);
 
                 return responseBody;
             }
@@ -44,7 +44,7 @@ public class SimpleHttpRequest {
         url.append(apiKey);
         url.append("&image=");
         url.append(image);
-
+        log.info(url.toString());
         return url.toString();
     }
 }

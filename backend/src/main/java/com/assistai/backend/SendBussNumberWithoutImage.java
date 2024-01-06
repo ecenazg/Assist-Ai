@@ -6,13 +6,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-
+@Slf4j
 @RestController
 public class SendBussNumberWithoutImage {
 
-    @RequestMapping(path = "/sendBussNumber", method = RequestMethod.POST)
+    @RequestMapping(path = "/sendBussNumber", method = RequestMethod.GET)
     @ResponseBody
     public JSONObject sendBussNumber() throws IOException {
         String image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTw8lmldap-c8JkSt7d4r0Y6V8oJY7sb0cEfg&usqp=CAU";
@@ -48,13 +49,12 @@ public class SendBussNumberWithoutImage {
 
 
             resultArray.put(resultObj);
-            System.out.println("Result Array: " + resultArray);
 
         }
 
         JSONObject result = new JSONObject();
         result.put("resultArray", resultArray);
-
-        return result;//return
+        log.info("Response " + result);
+        return result;
     }
 }
