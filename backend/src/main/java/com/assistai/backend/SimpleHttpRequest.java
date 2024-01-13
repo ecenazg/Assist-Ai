@@ -1,5 +1,8 @@
 package com.assistai.backend;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -7,10 +10,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
-import lombok.extern.slf4j.Slf4j;
-import java.io.IOException;
-@Slf4j
+import com.assistai.backend.core.*;
 public class SimpleHttpRequest {
 
     final static String apiUrl = "https://detect.roboflow.com/bus-number-detection-0fiy2/1";
@@ -29,22 +29,19 @@ public class SimpleHttpRequest {
                 HttpEntity entity = response.getEntity();
                 String responseBody = entity != null ? EntityUtils.toString(entity) : "";
 
-                log.info("Response Code: " + statusCode);
-                log.info("Response: " + responseBody);
-
                 return responseBody;
             }
         }
     }
 
-    public static String createUrl(String image) {
+    public static String createUrl(String image) throws IOException {
         StringBuilder url = new StringBuilder();
         url.append(apiUrl);
         url.append("?api_key=");
         url.append(apiKey);
         url.append("&image=");
-        url.append(image);
-        log.info(url.toString());
+        url.append(URLEncoder.encode(image, "UTF-8"));
+
         return url.toString();
     }
 }

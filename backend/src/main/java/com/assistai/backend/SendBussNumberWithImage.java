@@ -1,61 +1,49 @@
 package com.assistai.backend;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.assistai.backend.core.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
-@Slf4j
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 public class SendBussNumberWithImage {
 
     @RequestMapping(path = "/sendBussNumberImage", method = RequestMethod.POST)
     @ResponseBody
-    public JSONObject sendBussNumber(String image) throws IOException {
 
+    public Map<String, Object> sendBussNumber(String image) throws IOException {
+        Logger logger = LoggerFactory.getLogger(SendBussNumberWithImage.class);
 
         String response = SimpleHttpRequest.sendPostRequest(image);
 
-        JSONObject jsonResponse = new JSONObject(response);
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> jsonResponseFromRequest = objectMapper.readValue(response, Map.class);
 
-        double time = jsonResponse.getDouble("time");
-        JSONArray predictionsArray = jsonResponse.getJSONArray("predictions");
+        // Extract information from the parsed response
+        double time = (double) jsonResponseFromRequest.get("time");
+        Map<String, Object> imageInfo = (Map<String, Object>) jsonResponseFromRequest.get("image");
+        Iterable<Map<String, Object>> predictions = (Iterable<Map<String, Object>>) jsonResponseFromRequest.get("predictions");
 
-        JSONArray resultArray = new JSONArray();
+        Map<String, Object> organizedResponse = new HashMap<>();
+        organizedResponse.put("time", time);
+        organizedResponse.put("image", imageInfo);
+        organizedResponse.put("predictions", predictions);
 
-        for (int i = 0; i < predictionsArray.length(); i++) {
-            JSONObject prediction = predictionsArray.getJSONObject(i);
+        // Log information
+        logger.info("Sending request with image: {}", image);
+        logger.info("Received response: {}", response);
 
-            double x = prediction.getDouble("x");
-            double y = prediction.getDouble("y");
-            double width = prediction.getDouble("width");
-            double height = prediction.getDouble("height");
-            double confidence = prediction.getDouble("confidence");
-            String classLabel = prediction.getString("class");
-            int classId = prediction.getInt("class_id");
+        return organizedResponse;
 
-            JSONObject resultObj = new JSONObject();
-            resultObj.put("x", x);
-            resultObj.put("y", y);
-            resultObj.put("width", width);
-            resultObj.put("height", height);
-            resultObj.put("confidence", confidence);
-            resultObj.put("classLabel", classLabel);
-            resultObj.put("classId", classId);
 
-            resultArray.put(resultObj);
-            System.out.println("Result Array: " + resultArray);
 
-        }
-
-        JSONObject result = new JSONObject();
-        result.put("resultArray", resultArray);
-        log.info("Response " + result);
-        return result;
     }
 }
